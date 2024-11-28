@@ -7,17 +7,22 @@ const paper1 = document.querySelector("#p1");
 const paper2 = document.querySelector("#p2");
 const paper3 = document.querySelector("#p3");
 const paper4 = document.querySelector("#p4");
-const paper5 = document.querySelector("#p5"); // New paper reference
+const paper5 = document.querySelector("#p5");
 
-// Event Listener
+// Add class "paper" to all paper elements for easier handling
+const papers = [paper1, paper2, paper3, paper4, paper5];
+papers.forEach((paper) => paper.classList.add("paper"));
+
+// Event Listeners
 prevBtn.addEventListener("click", goPrevPage);
 nextBtn.addEventListener("click", goNextPage);
 
 // Business Logic
 let currentLocation = 1;
-let numOfPapers = 5;  // Updated to 5 for five pages
-let maxLocation = numOfPapers + 1;  // One more than the number of papers
+let numOfPapers = 5; // Total number of pages
+let maxLocation = numOfPapers + 1; // Max location (end of the book)
 
+// Functions
 function openBook() {
     book.style.transform = "translateX(50%)";
     prevBtn.style.transform = "translateX(-180px)";
@@ -26,9 +31,9 @@ function openBook() {
 
 function closeBook(isAtBeginning) {
     if (isAtBeginning) {
-        book.style.transform = "translateX(0%)";
+        book.style.transform = "translateX(0%)"; // Closed to front cover
     } else {
-        book.style.transform = "translateX(100%)";
+        book.style.transform = "translateX(100%)"; // Closed to back cover
     }
 
     prevBtn.style.transform = "translateX(0px)";
@@ -64,6 +69,9 @@ function goNextPage() {
                 throw new Error("Unknown state");
         }
         currentLocation++;
+    } else {
+        // Reset to the first page when clicking Next on the last page
+        resetToFirstPage();
     }
 }
 
@@ -98,3 +106,22 @@ function goPrevPage() {
         currentLocation--;
     }
 }
+
+// Reset the book to the first page
+function resetToFirstPage() {
+    closeBook(true); // Close the book to the front cover
+    currentLocation = 1; // Reset location
+    papers.forEach((paper) => {
+        paper.classList.remove("flipped"); // Unflip all pages
+        paper.style.zIndex = "0"; // Reset zIndex
+    });
+    paper1.style.zIndex = 5; // Ensure the front page is on top
+}
+
+// Initial Setup: Start with the book closed and all pages unflipped
+function initializeBook() {
+    resetToFirstPage();
+}
+
+// Call the initializeBook function when the script loads
+initializeBook();
