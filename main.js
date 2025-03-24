@@ -16,60 +16,45 @@ prevBtn.addEventListener("click", goPrevPage);
 nextBtn.addEventListener("click", goNextPage);
 
 // Business Logic
-let currentLocation = 1;
-let maxLocation = papers.length + 1;
+let currentLocation = 0; // Start at first double-page spread
+let maxLocation = papers.length; // Total number of pages
 
 // Functions
-function openBook() {
-    book.style.transform = "translateX(50%)";
-}
-
-function closeBook() {
-    book.style.transform = "translateX(0%)";
+function updateButtons() {
+    prevBtn.style.display = currentLocation === 0 ? "none" : "block";
+    nextBtn.style.display = currentLocation >= maxLocation ? "none" : "block";
 }
 
 function goNextPage() {
     if (currentLocation < maxLocation) {
-        papers[currentLocation - 1].classList.add("flipped");
-        papers[currentLocation - 1].style.zIndex = currentLocation;
+        papers[currentLocation].classList.add("flipped");
+        papers[currentLocation].style.zIndex = currentLocation + 1;
         currentLocation++;
 
-        // Ensure buttons are visible
-        prevBtn.style.display = "block";
-    }
+        if (currentLocation % 2 === 0) {
+            book.classList.add("open");
+        }
 
-    if (currentLocation === maxLocation) {
-        nextBtn.style.display = "none"; // Hide next button at the last page
+        updateButtons();
     }
 }
 
 function goPrevPage() {
-    if (currentLocation > 1) {
+    if (currentLocation > 0) {
         currentLocation--;
-        papers[currentLocation - 1].classList.remove("flipped");
-        papers[currentLocation - 1].style.zIndex = maxLocation - currentLocation;
+        papers[currentLocation].classList.remove("flipped");
+        papers[currentLocation].style.zIndex = maxLocation - currentLocation;
 
-        nextBtn.style.display = "block"; // Ensure next button is visible
+        if (currentLocation % 2 === 1) {
+            book.classList.add("open");
+        } else {
+            book.classList.remove("open");
+        }
+
+        updateButtons();
     }
-
-    if (currentLocation === 1) {
-        prevBtn.style.display = "none"; // Hide previous button on first page
-    }
-}
-
-function resetToFirstPage() {
-    closeBook();
-    currentLocation = 1;
-    papers.forEach((paper) => {
-        paper.classList.remove("flipped");
-        paper.style.zIndex = "0";
-    });
-    papers[0].style.zIndex = 4;
-
-    // Reset button visibility
-    prevBtn.style.display = "none";
-    nextBtn.style.display = "block";
 }
 
 // Initialize Book
-resetToFirstPage();
+book.classList.add("open"); // Ensure book is always open
+updateButtons();
