@@ -24,8 +24,8 @@ function openBook() {
     book.style.transform = "translateX(50%)";
 }
 
-function closeBook(isAtBeginning) {
-    book.style.transform = isAtBeginning ? "translateX(0%)" : "translateX(100%)";
+function closeBook() {
+    book.style.transform = "translateX(0%)";
 }
 
 function goNextPage() {
@@ -33,8 +33,13 @@ function goNextPage() {
         papers[currentLocation - 1].classList.add("flipped");
         papers[currentLocation - 1].style.zIndex = currentLocation;
         currentLocation++;
-    } else {
-        resetToFirstPage();
+
+        // Ensure buttons are visible
+        prevBtn.style.display = "block";
+    }
+
+    if (currentLocation === maxLocation) {
+        nextBtn.style.display = "none"; // Hide next button at the last page
     }
 }
 
@@ -43,17 +48,27 @@ function goPrevPage() {
         currentLocation--;
         papers[currentLocation - 1].classList.remove("flipped");
         papers[currentLocation - 1].style.zIndex = maxLocation - currentLocation;
+
+        nextBtn.style.display = "block"; // Ensure next button is visible
+    }
+
+    if (currentLocation === 1) {
+        prevBtn.style.display = "none"; // Hide previous button on first page
     }
 }
 
 function resetToFirstPage() {
-    closeBook(true);
+    closeBook();
     currentLocation = 1;
     papers.forEach((paper) => {
         paper.classList.remove("flipped");
         paper.style.zIndex = "0";
     });
     papers[0].style.zIndex = 4;
+
+    // Reset button visibility
+    prevBtn.style.display = "none";
+    nextBtn.style.display = "block";
 }
 
 // Initialize Book
