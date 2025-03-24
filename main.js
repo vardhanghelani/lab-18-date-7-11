@@ -9,27 +9,24 @@ prevBtn.addEventListener("click", goPrevPage);
 nextBtn.addEventListener("click", goNextPage);
 
 // Business Logic
-let currentLocation = 1; // Start at first page (the cover is already flipped)
+let currentLocation = 0; // Start at cover (0 means book is closed showing the cover)
 let numOfPapers = papers.length;
-let maxLocation = numOfPapers + 1; // +1 because we're counting positions, not just papers
+let maxLocation = numOfPapers;
 
 // Functions
 function openBook() {
     book.classList.add("open");
+    book.classList.remove("close");
 }
 
-function closeBook(isAtBeginning) {
-    if(isAtBeginning) {
-        book.classList.remove("open");
-    } else {
-        book.classList.add("close");
-        book.classList.remove("open");
-    }
+function closeBook() {
+    book.classList.remove("open");
+    book.classList.add("close");
 }
 
 function updateButtons() {
     // Hide prev button when at the beginning
-    prevBtn.style.display = currentLocation === 1 ? "none" : "block";
+    prevBtn.style.display = currentLocation === 0 ? "none" : "block";
     
     // Hide next button when at the end
     nextBtn.style.display = currentLocation >= maxLocation ? "none" : "block";
@@ -37,21 +34,21 @@ function updateButtons() {
 
 function goNextPage() {
     if (currentLocation < maxLocation) {
-        // If at the beginning, open the book first
-        if (currentLocation === 1) {
+        // If at the cover, open the book
+        if (currentLocation === 0) {
             openBook();
         }
         
         // Flip the current page
-        papers[currentLocation - 1].classList.add("flipped");
-        papers[currentLocation - 1].style.zIndex = currentLocation;
+        papers[currentLocation].classList.add("flipped");
+        papers[currentLocation].style.zIndex = currentLocation;
         
         // Move to the next page
         currentLocation++;
         
-        // If at the end, close the book
+        // If at the last page, adjust view
         if (currentLocation === maxLocation) {
-            closeBook(false);
+            papers[currentLocation - 1].style.zIndex = numOfPapers;
         }
         
         updateButtons();
@@ -59,30 +56,17 @@ function goNextPage() {
 }
 
 function goPrevPage() {
-    if (currentLocation > 1) {
-        // If at the end, open the book
-        if (currentLocation === maxLocation) {
-            openBook();
-        }
+    if (currentLocation > 0) {
+        // Flip back the page
+        papers[currentLocation - 1].classList.remove("flipped");
+        papers[currentLocation - 1].style.zIndex = numOfPapers - (currentLocation - 1);
         
         // Move to the previous page
         currentLocation--;
         
-        // Flip back the page
-        papers[currentLocation - 1].classList.remove("flipped");
-        
-        // Update z-index for proper stacking
-        for (let i = 0; i < numOfPapers; i++) {
-            if (i < currentLocation - 1) {
-                papers[i].style.zIndex = i + 1;
-            } else {
-                papers[i].style.zIndex = numOfPapers - i;
-            }
-        }
-        
-        // If at the beginning, close the book
-        if (currentLocation === 1) {
-            closeBook(true);
+        // If back at the cover, close the book
+        if (currentLocation === 0) {
+            closeBook();
         }
         
         updateButtons();
@@ -90,17 +74,24 @@ function goPrevPage() {
 }
 
 // Initialize Book
-// Check if first page is meant to be flipped at start
-if (papers[0].classList.contains("flipped")) {
-    openBook();
-} else {
-    closeBook(true);
+function init() {
+    // Reset all pages - make sure no page is flipped at start
+    papers.forEach(paper => {
+        paper.classList.remove("flipped");
+    });
+    
+    // Set z-index for proper stacking
+    for (let i = 0; i < numOfPapers; i++) {
+        papers[i].style.zIndex = numOfPapers - i;
+    }
+    
+    // Start with closed book
+    currentLocation = 0;
+    closeBook();
+    
+    // Initial button state
+    updateButtons();
 }
 
-// Set initial z-index values
-for (let i = 0; i < numOfPapers; i++) {
-    papers[i].style.zIndex = numOfPapers - i;
-}
-
-// Initial button state
-updateButtons();
+// Run initialization
+init();
