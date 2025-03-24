@@ -1,4 +1,4 @@
-/* Reset */
+* Reset */
 * {
     margin: 0;
     padding: 0;
@@ -16,68 +16,75 @@ body {
 
 /* Book Container */
 .book-container {
-    position: relative;
+    position: relative;  /* Ensure buttons are positioned correctly */
     display: flex;
     align-items: center;
-    overflow: visible;
+    overflow: visible; /* Prevent buttons from being clipped */
 }
 
 /* Book */
 .book {
     position: relative;
-    width: 700px; /* Increased width for two-page view */
+    width: 350px;
     height: 500px;
-    transition: transform 0.75s ease-in-out;
+    transition: transform 0.75s;
     transform-style: preserve-3d;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* Open Book Effect */
-.book.open {
-    transform: translateX(0%);
 }
 
 /* Pages */
 .paper {
     position: absolute;
-    width: 50%; /* Each page takes half of the book width */
+    width: 100%;
     height: 100%;
     top: 0;
-    perspective: 1500px;
-    transform-origin: center;
-}
-
-/* Left & Right Pages */
-.left-page {
     left: 0;
-    background-color: white;
-    border-right: 2px solid rgb(9, 203, 242);
+    perspective: 1500px;
 }
 
-.right-page {
-    right: 0;
+/* Front & Back */
+.front, .back {
     background-color: white;
-    border-left: 2px solid rgb(9, 203, 242);
-}
-
-/* Flipping Effect */
-.flipped {
-    transform: rotateY(-180deg);
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    transform-origin: left;
     transition: transform 0.75s ease;
+    border: 5px solid rgb(9, 203, 242);
+    backface-visibility: hidden;
+}
+
+.front {
+    z-index: 1;
+    border-left: 3px solid rgb(230, 176, 217);
+}
+
+.back {
+    z-index: 0;
+    transform: rotateY(180deg);
 }
 
 /* Content inside pages */
-.page-content {
+.front-content, .back-content {
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding-top: 30px;
     text-align: center;
+}
+
+/* Flipping Effect */
+.flipped {
+    z-index: 5 !important;
+}
+
+.flipped .front,
+.flipped .back {
+    transform: rotateY(-180deg);
 }
 
 /* Buttons */
@@ -86,10 +93,10 @@ button {
     background-color: transparent;
     cursor: pointer;
     font-size: 30px;
-    color: black;
+    color: black; /* Changed to black for visibility */
     transition: transform 0.5s;
     position: absolute;
-    z-index: 10;
+    z-index: 10; /* Ensures buttons stay above pages */
 }
 
 button:hover i {
@@ -110,8 +117,8 @@ button:hover i {
 }
 
 /* Z-index layers */
-#p1 { z-index: 5; }
-#p2 { z-index: 4; }
-#p3 { z-index: 3; }
-#p4 { z-index: 2; }
-#p5 { z-index: 1; }
+#p1 { z-index: 4; }
+#p2 { z-index: 3; }
+#p3 { z-index: 2; }
+#p4 { z-index: 1; }
+#p5 { z-index: 0; }
