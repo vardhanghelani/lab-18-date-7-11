@@ -16,8 +16,10 @@ body {
 
 /* Book Container */
 .book-container {
+    position: relative;  /* Ensure buttons are positioned correctly */
     display: flex;
     align-items: center;
+    overflow: visible; /* Prevent buttons from being clipped */
 }
 
 /* Book */
@@ -70,8 +72,9 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     padding-top: 30px;
+    text-align: center;
 }
 
 /* Flipping Effect */
@@ -90,8 +93,10 @@ button {
     background-color: transparent;
     cursor: pointer;
     font-size: 30px;
-    color: gray;
+    color: black; /* Changed to black for visibility */
     transition: transform 0.5s;
+    position: absolute;
+    z-index: 10; /* Ensures buttons stay above pages */
 }
 
 button:hover i {
@@ -100,30 +105,15 @@ button:hover i {
 
 /* Positioning Buttons */
 #prev-btn {
-    position: absolute;
     left: -60px;
     top: 50%;
     transform: translateY(-50%);
 }
 
 #next-btn {
-    position: absolute;
     right: -60px;
     top: 50%;
     transform: translateY(-50%);
-}
-
-/* Images */
-#b1img, #f2img {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* Text */
-.b1write, .f2write {
-    margin-top: 10px;
 }
 
 /* Z-index layers */
