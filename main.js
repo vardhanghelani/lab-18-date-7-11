@@ -41,15 +41,24 @@ function goNextPage() {
         
         // Flip the current page
         papers[currentLocation].classList.add("flipped");
-        papers[currentLocation].style.zIndex = currentLocation;
+        
+        // Set z-index to create proper stacking when turning pages
+        // Current paper needs to be above all others when flipping
+        for (let i = 0; i < numOfPapers; i++) {
+            if (i < currentLocation) {
+                // Already flipped pages should stay behind
+                papers[i].style.zIndex = 1;
+            } else if (i === currentLocation) {
+                // Current page being flipped needs highest z-index
+                papers[i].style.zIndex = numOfPapers + 1;
+            } else {
+                // Unflipped pages need to be stacked in order
+                papers[i].style.zIndex = numOfPapers - i;
+            }
+        }
         
         // Move to the next page
         currentLocation++;
-        
-        // If at the last page, adjust view
-        if (currentLocation === maxLocation) {
-            papers[currentLocation - 1].style.zIndex = numOfPapers;
-        }
         
         updateButtons();
     }
@@ -59,7 +68,20 @@ function goPrevPage() {
     if (currentLocation > 0) {
         // Flip back the page
         papers[currentLocation - 1].classList.remove("flipped");
-        papers[currentLocation - 1].style.zIndex = numOfPapers - (currentLocation - 1);
+        
+        // Reset z-index for proper stacking
+        for (let i = 0; i < numOfPapers; i++) {
+            if (i < currentLocation - 1) {
+                // Already flipped pages stay behind
+                papers[i].style.zIndex = 1;
+            } else if (i === currentLocation - 1) {
+                // Current page being unflipped needs highest z-index
+                papers[i].style.zIndex = numOfPapers + 1;
+            } else {
+                // Unflipped pages need to be stacked in order
+                papers[i].style.zIndex = numOfPapers - i;
+            }
+        }
         
         // Move to the previous page
         currentLocation--;
