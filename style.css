@@ -37,7 +37,6 @@ body {
 
 .book.open {
     transform: translateX(175px); /* Half the width to center the spine */
-    width: 700px; /* Double width when open */
 }
 
 .book.close {
@@ -52,6 +51,7 @@ body {
     top: 0;
     left: 0;
     transform-style: preserve-3d;
+    transition: transform 0.5s ease-in-out;
 }
 
 /* Front & Back */
@@ -63,7 +63,8 @@ body {
     top: 0;
     left: 0;
     transform-origin: left;
-    transition: transform 0.5s ease-in-out;
+    backface-visibility: hidden;
+    transition: transform 0.5s ease-in-out, box-shadow 0.5s ease-in-out;
     border: 5px solid rgb(9, 203, 242);
     overflow: hidden; /* To prevent content from overflowing */
 }
@@ -71,14 +72,12 @@ body {
 .front {
     z-index: 1;
     border-left: 3px solid rgb(230, 176, 217);
-    backface-visibility: hidden;
 }
 
 .back {
     z-index: 0;
     border-right: 3px solid rgb(230, 176, 217);
     transform: rotateY(180deg);
-    backface-visibility: hidden;
 }
 
 /* Cover page specific styling */
@@ -103,10 +102,12 @@ body {
 /* Flipping Effect */
 .flipped .front {
     transform: rotateY(-180deg);
+    box-shadow: -5px 5px 5px rgba(0,0,0,0.2);
 }
 
 .flipped .back {
     transform: rotateY(0deg);
+    box-shadow: 5px 5px 5px rgba(0,0,0,0.2);
 }
 
 /* Buttons */
@@ -182,19 +183,16 @@ h2 {
     opacity: 1;
 }
 
-/* Add page shadows for depth */
-.paper::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 10px;
-    height: 100%;
-    background: linear-gradient(to left, rgba(0,0,0,0.1), transparent);
-    transform-origin: right;
-    transition: transform 0.5s;
+/* Page shadow for depth */
+.front {
+    box-shadow: inset -10px 0 10px -10px rgba(0,0,0,0.1);
 }
 
-.flipped .paper::after {
-    transform: rotateY(180deg);
+.back {
+    box-shadow: inset 10px 0 10px -10px rgba(0,0,0,0.1);
+}
+
+/* Enhanced page turn effect */
+.flipped {
+    z-index: 10;
 }
