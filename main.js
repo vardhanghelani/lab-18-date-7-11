@@ -15,105 +15,87 @@ let maxLocation = numOfPapers;
 
 // Functions
 function openBook() {
-    book.classList.add("open");
-    book.classList.remove("close");
+    book.style.transform = "translateX(50%)";
+    prevBtn.style.transform = "translateX(-180px)";
+    nextBtn.style.transform = "translateX(180px)";
 }
 
-function closeBook() {
-    book.classList.remove("open");
-    book.classList.add("close");
-}
-
-function updateButtons() {
-    // Hide prev button when at the beginning
-    prevBtn.style.display = currentLocation === 0 ? "none" : "block";
+function closeBook(isAtBeginning) {
+    if(isAtBeginning) {
+        book.style.transform = "translateX(0%)";
+    } else {
+        book.style.transform = "translateX(100%)";
+    }
     
-    // Hide next button when at the end
-    nextBtn.style.display = currentLocation >= maxLocation ? "none" : "block";
+    prevBtn.style.transform = "translateX(0px)";
+    nextBtn.style.transform = "translateX(0px)";
 }
 
 function goNextPage() {
-    if (currentLocation < maxLocation) {
-        // If at the cover, open the book
-        if (currentLocation === 0) {
-            openBook();
+    if(currentLocation < maxLocation) {
+        switch(currentLocation) {
+            case 0:
+                openBook();
+                papers[0].classList.add("flipped");
+                papers[0].style.zIndex = 1;
+                break;
+            default:
+                papers[currentLocation].classList.add("flipped");
+                papers[currentLocation].style.zIndex = currentLocation;
+                break;
         }
         
-        // Flip the current page
-        papers[currentLocation].classList.add("flipped");
-        
-        // Set z-index to create proper stacking when turning pages
-        // Current paper needs to be above all others when flipping
-        for (let i = 0; i < numOfPapers; i++) {
-            if (i < currentLocation) {
-                // Already flipped pages should stay behind
-                papers[i].style.zIndex = 1;
-            } else if (i === currentLocation) {
-                // Current page being flipped needs highest z-index
-                papers[i].style.zIndex = numOfPapers + 1;
-            } else {
-                // Unflipped pages need to be stacked in order
-                papers[i].style.zIndex = numOfPapers - i;
-            }
-        }
-        
-        // Move to the next page
         currentLocation++;
-        
         updateButtons();
     }
 }
 
 function goPrevPage() {
-    if (currentLocation > 0) {
-        // Flip back the page
-        papers[currentLocation - 1].classList.remove("flipped");
-        
-        // Reset z-index for proper stacking
-        for (let i = 0; i < numOfPapers; i++) {
-            if (i < currentLocation - 1) {
-                // Already flipped pages stay behind
-                papers[i].style.zIndex = 1;
-            } else if (i === currentLocation - 1) {
-                // Current page being unflipped needs highest z-index
-                papers[i].style.zIndex = numOfPapers + 1;
-            } else {
-                // Unflipped pages need to be stacked in order
-                papers[i].style.zIndex = numOfPapers - i;
-            }
+    if(currentLocation > 0) {
+        switch(currentLocation) {
+            case 1:
+                closeBook(true);
+                papers[0].classList.remove("flipped");
+                papers[0].style.zIndex = numOfPapers;
+                break;
+            default:
+                papers[currentLocation - 1].classList.remove("flipped");
+                papers[currentLocation - 1].style.zIndex = numOfPapers - (currentLocation - 1);
+                break;
         }
         
-        // Move to the previous page
         currentLocation--;
-        
-        // If back at the cover, close the book
-        if (currentLocation === 0) {
-            closeBook();
-        }
-        
         updateButtons();
+    }
+}
+
+function updateButtons() {
+    if(currentLocation === 0) {
+        prevBtn.style.visibility = "hidden";
+    } else {
+        prevBtn.style.visibility = "visible";
+    }
+    
+    if(currentLocation === maxLocation) {
+        nextBtn.style.visibility = "hidden";
+    } else {
+        nextBtn.style.visibility = "visible";
     }
 }
 
 // Initialize Book
 function init() {
-    // Reset all pages - make sure no page is flipped at start
-    papers.forEach(paper => {
-        paper.classList.remove("flipped");
-    });
+    // Set initial positions and z-index
+    book.style.transform = "translateX(0%)";
     
-    // Set z-index for proper stacking
-    for (let i = 0; i < numOfPapers; i++) {
+    for(let i = 0; i < numOfPapers; i++) {
         papers[i].style.zIndex = numOfPapers - i;
+        papers[i].classList.remove("flipped");
     }
     
-    // Start with closed book
     currentLocation = 0;
-    closeBook();
-    
-    // Initial button state
     updateButtons();
 }
 
 // Run initialization
-init();
+window.addEventListener('load', init);
